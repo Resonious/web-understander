@@ -12,8 +12,10 @@
 *
 ********************************************************************************************/
 
+#include "emscripten/emscripten.h"
 #include "raylib.h"
 #include "screens.h"    // NOTE: Declares global (extern) variables and screens functions
+#include "js_interop.h"
 
 #if defined(PLATFORM_WEB)
     #include <emscripten/emscripten.h>
@@ -31,9 +33,6 @@ Sound fxCoin = { 0 };
 //----------------------------------------------------------------------------------
 // Local Variables Definition (local to this module)
 //----------------------------------------------------------------------------------
-static const int screenWidth = 800;
-static const int screenHeight = 450;
-
 // Required variables to manage screen transitions (fade-in, fade-out)
 static float transAlpha = 0.0f;
 static bool onTransition = false;
@@ -59,7 +58,9 @@ int main(void)
 {
     // Initialization
     //---------------------------------------------------------
-    InitWindow(screenWidth, screenHeight, "raylib game template");
+    InitWindow(SysScreenWidth(), SysScreenHeight(), "Web Understander");
+    SetWindowState(FLAG_WINDOW_RESIZABLE);
+    StartListeningForResizeEvents();
 
     InitAudioDevice();      // Initialize audio device
 
@@ -145,6 +146,8 @@ static void ChangeToScreen(GameScreen screen)
 // Request transition to next screen
 static void TransitionToScreen(GameScreen screen)
 {
+    TraceLog(9, "fuckin what %i\n", SysScreenHeight());
+    SysScreenWidth();
     onTransition = true;
     transFadeOut = false;
     transFromScreen = currentScreen;
@@ -210,7 +213,7 @@ static void UpdateTransition(void)
 // Draw transition effect (full-screen rectangle)
 static void DrawTransition(void)
 {
-    DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(BLACK, transAlpha));
+    DrawRectangle(0, 0, SysScreenWidth(), SysScreenHeight(), Fade(BLACK, transAlpha));
 }
 
 // Update and draw game frame
@@ -291,3 +294,12 @@ static void UpdateDrawFrame(void)
     EndDrawing();
     //----------------------------------------------------------------------------------
 }
+
+#if defined(PLATFORM_WEB)
+// This is the "resize" event listener callback (referenced in js_interop.c)
+EMSCRIPTEN_KEEPALIVE
+void WindowResized(int width, int height)
+{
+    SetWindowSize(width, height);
+}
+#endif
