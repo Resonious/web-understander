@@ -59,7 +59,9 @@ int main(void)
     // Initialization
     //---------------------------------------------------------
     InitWindow(SysScreenWidth(), SysScreenHeight(), "Web Understander");
+#if !defined(PLATFORM_WEB)
     SetWindowState(FLAG_WINDOW_RESIZABLE);
+#endif
     StartListeningForResizeEvents();
 
     InitAudioDevice();      // Initialize audio device
