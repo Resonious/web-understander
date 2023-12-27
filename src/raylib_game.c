@@ -12,7 +12,6 @@
 *
 ********************************************************************************************/
 
-#include "emscripten/emscripten.h"
 #include "raylib.h"
 #include "screens.h"    // NOTE: Declares global (extern) variables and screens functions
 #include "js_interop.h"
@@ -148,8 +147,6 @@ static void ChangeToScreen(GameScreen screen)
 // Request transition to next screen
 static void TransitionToScreen(GameScreen screen)
 {
-    TraceLog(9, "fuckin what %i\n", SysScreenHeight());
-    SysScreenWidth();
     onTransition = true;
     transFadeOut = false;
     transFromScreen = currentScreen;
