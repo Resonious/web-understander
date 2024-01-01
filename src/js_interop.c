@@ -29,6 +29,7 @@ EM_JS(void, NativeBeginDrawing, (), {
 EM_JS(void, NativeEndDrawing, (), {
   for (const x in window._nd) {
     if (!window._nd[x]) {
+      window._submit[id] = false;
       document.getElementById(x)?.remove();
     }
   }
