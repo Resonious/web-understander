@@ -46,6 +46,8 @@ EM_JS(int, NativeTextInput, (const char *id_cstr, int x, int y, int w, int h), {
 
     input = document.createElement("input");
     input.type = "text";
+    input.style.width = "100%";
+    input.style.height = "100%";
 
     form.append(input);
     document.body.append(form);
@@ -56,8 +58,8 @@ EM_JS(int, NativeTextInput, (const char *id_cstr, int x, int y, int w, int h), {
 
   form.style.left = x + "px";
   form.style.top = y + "px";
-  input.style.width = w + "px";
-  input.style.height = h + "px";
+  form.style.width = w + "px";
+  form.style.height = h + "px";
 
   const submitted = !!window._submit[id];
   window._submit[id] = false;

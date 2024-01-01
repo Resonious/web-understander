@@ -284,11 +284,11 @@ static void UpdateDrawFrame(void)
 
         ClearBackground(RAYWHITE);
 
-        DrawRectangle(10, 10, 100, 100, ColorFromHSV(0.2, 1.0, 1.0));
+        DrawRectangle(w / 2, h / 2, 100, 100, ColorFromHSV(0.2, 1.0, 1.0));
 
-        bool submitted = NativeTextInput("uniqueid", 20, 20, 140, 20);
+        bool submitted = NativeTextInput("uniqueid", w / 2 + 10, h / 2 + 10, 140, 20);
         if (submitted) {
-            DrawRectangle(40, 40, 100, 100, ColorFromHSV(0.7, 1.0, 1.0));
+            DrawRectangle(w / 2 + 10, h / 2 + 10, 100, 100, ColorFromHSV(0.7, 1.0, 1.0));
             PlaySound(fxCoin);
         }
 
