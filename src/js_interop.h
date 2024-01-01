@@ -4,6 +4,9 @@
 int SysScreenWidth();
 int SysScreenHeight();
 void StartListeningForResizeEvents();
-void NativeTextInput(const char *, int, int, int, int);
+void NativeBeginDrawing();
+void NativeEndDrawing();
+int NativeTextInput(const char *id, int x, int y, int w, int h);
+char *NativeTextValue(const char *id);
 
 #endif

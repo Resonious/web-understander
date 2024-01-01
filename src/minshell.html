@@ -45,6 +45,21 @@
             saveAs(blob, localFSname);
         }
     </script>
+
+    <script>
+        // Means "native drawing". Lets us pretend the dom is immediate mode.
+        window._nd = {};
+
+        // Tracks which native elements have submitted since last frame.
+        window._submit = {};
+
+        // Callback for when user "submits" native text inputs
+        function _trackSubmit(event) {
+            event.preventDefault();
+            window._submit[event.target.id] = true;
+        }
+    </script>
+
     </head>
     <body>
         <canvas class=emscripten id=canvas oncontextmenu=event.preventDefault() tabindex=-1></canvas>

@@ -24,7 +24,7 @@
 // Shared Variables Definition (global)
 // NOTE: Those variables are shared between modules through screens.h
 //----------------------------------------------------------------------------------
-GameScreen currentScreen = LOGO;
+GameScreen currentScreen = GAMEPLAY;
 Font font = { 0 };
 Music music = { 0 };
 Sound fxCoin = { 0 };
@@ -274,16 +274,23 @@ static void UpdateDrawFrame(void)
     else UpdateTransition();    // Update transition (fade-in, fade-out)
     //----------------------------------------------------------------------------------
 
+    int w = GetScreenWidth();
+    int h = GetScreenHeight();
+
     // Draw
     //----------------------------------------------------------------------------------
     BeginDrawing();
+    NativeBeginDrawing();
 
         ClearBackground(RAYWHITE);
 
         DrawRectangle(10, 10, 100, 100, ColorFromHSV(0.2, 1.0, 1.0));
 
-        // TODO: also want a buffer in this interface.
-        NativeTextInput("uniqueid", 20, 20, 40, 20);
+        bool submitted = NativeTextInput("uniqueid", 20, 20, 140, 20);
+        if (submitted) {
+            DrawRectangle(40, 40, 100, 100, ColorFromHSV(0.7, 1.0, 1.0));
+            PlaySound(fxCoin);
+        }
 
         // switch(currentScreen)
         // {
@@ -301,6 +308,7 @@ static void UpdateDrawFrame(void)
         //DrawFPS(10, 10);
 
     EndDrawing();
+    NativeEndDrawing();
     //----------------------------------------------------------------------------------
 }
 

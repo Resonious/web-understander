@@ -18,21 +18,64 @@ EM_JS(void, StartListeningForResizeEvents, (), {
   });
 });
 
-EM_JS(void, NativeTextInput, (const char *cid, int x, int y, int w, int h), {
-  const id = UTF8ToString(cid);
-  let element = document.getElementById(id);
-  if (!element) {
-    element = document.createElement("input");
-    element.id = id;
-    element.type = "text";
-    element.style.position = "absolute";
-    document.body.append(element);
+// Call this before doing things like NativeTextInput
+EM_JS(void, NativeBeginDrawing, (), {
+  for (const x in window._nd) {
+    window._nd[x] = false;
+  }
+});
+
+// Call this after doing things like NativeTextInput
+EM_JS(void, NativeEndDrawing, (), {
+  for (const x in window._nd) {
+    if (!window._nd[x]) {
+      document.getElementById(x)?.remove();
+    }
+  }
+});
+
+EM_JS(int, NativeTextInput, (const char *id_cstr, int x, int y, int w, int h), {
+  const id = UTF8ToString(id_cstr);
+  let form = document.getElementById(id);
+  let input;
+  if (!form) {
+    form = document.createElement("form");
+    form.id = id;
+    form.onsubmit = _trackSubmit;
+    form.style.position = "absolute";
+
+    input = document.createElement("input");
+    input.type = "text";
+
+    form.append(input);
+    document.body.append(form);
+  } else {
+    input = form.children[0];
+  }
+  window._nd[id] = true;
+
+  form.style.left = x + "px";
+  form.style.top = y + "px";
+  input.style.width = w + "px";
+  input.style.height = h + "px";
+
+  const submitted = !!window._submit[id];
+  window._submit[id] = false;
+  return submitted;
+});
+
+EM_JS(char *, NativeTextValue, (const char *id_cstr), {
+  const id = UTF8ToString(id_cstr);
+  const form = document.getElementById(id);
+
+  let result = "";
+  if (form) {
+    result = form.children[0].value;
   }
 
-  element.style.left = x + "px";
-  element.style.top = y + "px";
-  element.style.width = w + "px";
-  element.style.height = h + "px";
+  // TODO: might be more practical to copy into a passed-in buffer
+  const ptr = allocate(intArrayFromString(result), "i8", ALLOC_NORMAL);
+  return ptr;
 });
 
 #else
