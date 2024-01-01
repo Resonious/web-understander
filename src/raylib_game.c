@@ -39,6 +39,11 @@ static bool transFadeOut = false;
 static int transFromScreen = -1;
 static GameScreen transToScreen = UNKNOWN;
 
+enum AppState {
+    STATE_NOT_CONNECTED,
+    STATE_CONNECTING,
+};
+
 //----------------------------------------------------------------------------------
 // Local Functions Declaration
 //----------------------------------------------------------------------------------
@@ -71,7 +76,7 @@ int main(void)
     fxCoin = LoadSound("resources/coin.wav");
 
     SetMusicVolume(music, 1.0f);
-    PlayMusicStream(music);
+    // PlayMusicStream(music);
 
     // Setup and init first screen
     currentScreen = LOGO;
@@ -220,7 +225,7 @@ static void UpdateDrawFrame(void)
 {
     // Update
     //----------------------------------------------------------------------------------
-    UpdateMusicStream(music);       // NOTE: Music keeps playing between screens
+    // UpdateMusicStream(music);       // NOTE: Music keeps playing between screens
 
     if (!onTransition)
     {
@@ -275,15 +280,20 @@ static void UpdateDrawFrame(void)
 
         ClearBackground(RAYWHITE);
 
-        switch(currentScreen)
-        {
-            case LOGO: DrawLogoScreen(); break;
-            case TITLE: DrawTitleScreen(); break;
-            case OPTIONS: DrawOptionsScreen(); break;
-            case GAMEPLAY: DrawGameplayScreen(); break;
-            case ENDING: DrawEndingScreen(); break;
-            default: break;
-        }
+        DrawRectangle(10, 10, 100, 100, ColorFromHSV(0.2, 1.0, 1.0));
+
+        // TODO: also want a buffer in this interface.
+        NativeTextInput("uniqueid", 20, 20, 40, 20);
+
+        // switch(currentScreen)
+        // {
+        //     case LOGO: DrawLogoScreen(); break;
+        //     case TITLE: DrawTitleScreen(); break;
+        //     case OPTIONS: DrawOptionsScreen(); break;
+        //     case GAMEPLAY: DrawGameplayScreen(); break;
+        //     case ENDING: DrawEndingScreen(); break;
+        //     default: break;
+        // }
 
         // Draw full screen rectangle in front of everything
         if (onTransition) DrawTransition();
