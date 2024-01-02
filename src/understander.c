@@ -14,6 +14,7 @@
 
 #include "raylib.h"
 #include "js_interop.h"
+#include "widgets.h"
 
 #if defined(PLATFORM_WEB)
     #include <emscripten/emscripten.h>
@@ -28,9 +29,9 @@ Music music = { 0 };
 Sound fxCoin = { 0 };
 
 enum AppState {
-    STATE_NOT_CONNECTED,
+    STATE_NEED_IP,
     STATE_CONNECTING,
-};
+} state;
 
 static void UpdateDrawFrame(void);          // Update and draw one frame
 
@@ -49,8 +50,11 @@ int main(void)
 
     InitAudioDevice();      // Initialize audio device
 
+    state = STATE_NEED_IP;
+
     // Load global data (assets that must be available in all screens, i.e. font)
     font = LoadFont("resources/mecha.png");
+    global_font = LoadFont("resources/Ubunu-Regular.ttf");
     music = LoadMusicStream("resources/ambient.ogg");
     fxCoin = LoadSound("resources/coin.wav");
 
@@ -72,6 +76,7 @@ int main(void)
 
     // Unload global data loaded
     UnloadFont(font);
+    UnloadFont(global_font);
     UnloadMusicStream(music);
     UnloadSound(fxCoin);
 
@@ -83,6 +88,33 @@ int main(void)
     return 0;
 }
 
+const Color COLOR_PRIMARY = (Color){153, 64, 64, 255};
+
+static void DrawAskForIPAddress() {
+    float w = GetScreenWidth();
+    float h = GetScreenHeight();
+
+    ClearBackground(LIGHTGRAY);
+
+    DrawText("CONNECT", w / 2 + 10, h / 2 - 50, 16, BLACK);
+    
+    DrawRectangle(w / 2, h / 2, 150, 30, COLOR_PRIMARY);
+    bool submitted = NativeTextInput("ip", "127.0.0.1:9909", w / 2 + 10, h / 2 + 10, 140, 20);
+
+    Rectangle btn;
+    btn.x = w / 2;
+    btn.y = h / 2 + 70;
+    btn.width = 150;
+    btn.height = 50;
+    DrawButton(btn, "Connect", COLOR_PRIMARY);
+
+    if (submitted) {
+        DrawRectangle(w / 2 + 10, h / 2 + 10, 100, 100, ColorFromHSV(0.7, 1.0, 1.0));
+        PlaySound(fxCoin);
+        state = STATE_CONNECTING;
+    }
+}
+
 // Update and draw game frame
 static void UpdateDrawFrame(void)
 {
@@ -90,25 +122,20 @@ static void UpdateDrawFrame(void)
     //----------------------------------------------------------------------------------
     // UpdateMusicStream(music);       // NOTE: Music keeps playing between screens
 
-    int w = GetScreenWidth();
-    int h = GetScreenHeight();
-
     // Draw
     //----------------------------------------------------------------------------------
     BeginDrawing();
     NativeBeginDrawing();
 
-        ClearBackground(RAYWHITE);
-
-        DrawRectangle(w / 2, h / 2, 100, 100, ColorFromHSV(0.2, 1.0, 1.0));
-
-        bool submitted = NativeTextInput("uniqueid", w / 2 + 10, h / 2 + 10, 140, 20);
-        if (submitted) {
-            DrawRectangle(w / 2 + 10, h / 2 + 10, 100, 100, ColorFromHSV(0.7, 1.0, 1.0));
-            PlaySound(fxCoin);
-        }
-
-        //DrawFPS(10, 10);
+    switch (state) {
+        case STATE_NEED_IP:
+            DrawAskForIPAddress();
+            break;
+        case STATE_CONNECTING:
+            ClearBackground(DARKGRAY);
+            break;
+    }
+    //DrawFPS(10, 10);
 
     EndDrawing();
     NativeEndDrawing();

@@ -401,6 +401,7 @@ endif
 #------------------------------------------------------------------------------------------------
 PROJECT_SOURCE_FILES ?= \
     understander.c \
+    widgets.c \
     js_interop.c
 
 # Define all object files from source files

@@ -29,13 +29,13 @@ EM_JS(void, NativeBeginDrawing, (), {
 EM_JS(void, NativeEndDrawing, (), {
   for (const x in window._nd) {
     if (!window._nd[x]) {
-      window._submit[id] = false;
+      window._submit[x] = false;
       document.getElementById(x)?.remove();
     }
   }
 });
 
-EM_JS(int, NativeTextInput, (const char *id_cstr, int x, int y, int w, int h), {
+EM_JS(int, NativeTextInput, (const char *id_cstr, const char *default_value, int x, int y, int w, int h), {
   const id = UTF8ToString(id_cstr);
   let form = document.getElementById(id);
   let input;
@@ -49,6 +49,9 @@ EM_JS(int, NativeTextInput, (const char *id_cstr, int x, int y, int w, int h), {
     input.type = "text";
     input.style.width = "100%";
     input.style.height = "100%";
+    if (default_value != 0) {
+      input.value = UTF8ToString(default_value);
+    }
 
     form.append(input);
     document.body.append(form);
