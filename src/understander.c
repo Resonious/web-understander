@@ -16,6 +16,7 @@
 #include "raygui.h"
 #include "js_interop.h"
 #include "widgets.h"
+#include <string.h>
 
 #if defined(PLATFORM_WEB)
     #include <emscripten/emscripten.h>
@@ -36,11 +37,15 @@ enum AppState {
 
 static void UpdateDrawFrame(void);          // Update and draw one frame
 
+char connect_endpoint[256];
+
 //----------------------------------------------------------------------------------
 // Main entry point
 //----------------------------------------------------------------------------------
 int main(void)
 {
+    memset(connect_endpoint, 0, sizeof(connect_endpoint));
+
     // Initialization
     //---------------------------------------------------------
     InitWindow(SysScreenWidth(), SysScreenHeight(), "Web Understander");
@@ -101,14 +106,18 @@ static void DrawAskForIPAddress() {
     
     DrawRectangle(w / 2, h / 2, 150, 30, COLOR_PRIMARY);
     //bool submitted = NativeTextInput("ip", "127.0.0.1:9909", w / 2 + 10, h / 2 + 10, 140, 20);
+
     bool submitted = false;
 
-    Rectangle btn;
-    btn.x = w / 2;
-    btn.y = h / 2 + 70;
-    btn.width = 150;
-    btn.height = 50;
-    DrawButton(btn, "Connect", COLOR_PRIMARY);
+    Rectangle input;
+    input.x = w / 2;
+    input.y = h / 2 + 70;
+    input.width = 200;
+    input.height = 100;
+
+    GuiSetFont(global_font);
+    GuiTextInputBox(input, NULL, NULL, "Connect", connect_endpoint, sizeof(connect_endpoint), NULL);
+    // DrawButton(btn, "Connect", COLOR_PRIMARY);
 
     if (submitted) {
         DrawRectangle(w / 2 + 10, h / 2 + 10, 100, 100, ColorFromHSV(0.7, 1.0, 1.0));
