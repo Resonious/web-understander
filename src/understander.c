@@ -13,6 +13,7 @@
 ********************************************************************************************/
 
 #include "raylib.h"
+#include "raygui.h"
 #include "js_interop.h"
 #include "widgets.h"
 
@@ -99,7 +100,8 @@ static void DrawAskForIPAddress() {
     DrawText("CONNECT", w / 2 + 10, h / 2 - 50, 16, BLACK);
     
     DrawRectangle(w / 2, h / 2, 150, 30, COLOR_PRIMARY);
-    bool submitted = NativeTextInput("ip", "127.0.0.1:9909", w / 2 + 10, h / 2 + 10, 140, 20);
+    //bool submitted = NativeTextInput("ip", "127.0.0.1:9909", w / 2 + 10, h / 2 + 10, 140, 20);
+    bool submitted = false;
 
     Rectangle btn;
     btn.x = w / 2;
@@ -125,7 +127,6 @@ static void UpdateDrawFrame(void)
     // Draw
     //----------------------------------------------------------------------------------
     BeginDrawing();
-    NativeBeginDrawing();
 
     switch (state) {
         case STATE_NEED_IP:
@@ -138,7 +139,6 @@ static void UpdateDrawFrame(void)
     //DrawFPS(10, 10);
 
     EndDrawing();
-    NativeEndDrawing();
     //----------------------------------------------------------------------------------
 }
 
